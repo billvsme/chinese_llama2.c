@@ -29,7 +29,6 @@ from torch.distributed import destroy_process_group, init_process_group
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 #from tinystories import Task
-from wikipedia_cn import Task
 from export import model_export
 
 # -----------------------------------------------------------------------------
@@ -50,6 +49,7 @@ batch_size = 128  # if gradient_accumulation_steps > 1, this is the micro-batch 
 max_seq_len = 256
 vocab_source = "chatglm3" # llama2|custom|chatglm3; use Lllama 2 vocab from Meta, or custom trained
 vocab_size = 65024 # the Llama 2 tokenizer has 32K tokens
+task = "wikipedia_cn"
 # model
 dim = 288
 n_layers = 6
@@ -130,6 +130,11 @@ ctx = (
 )
 
 # task-specific setup
+if task == "wikipedia_cn":
+    from wikipedia_cn import Task
+else:
+    from tinystories_zh import Task
+
 iter_batches = partial(
     Task.iter_batches,
     batch_size=batch_size,
